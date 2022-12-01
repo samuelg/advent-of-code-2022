@@ -1,14 +1,12 @@
 import run from "aocrunner";
 import _ from "lodash";
 
-const parseInput = (rawInput: string) => {
+const parseInput = (rawInput: string): string[] => {
     const lines: string[] = rawInput.split('\n');
     return lines;
 };
 
-const part1 = (rawInput: string) => {
-  const input = parseInput(rawInput);
-
+const getElves = (input: string[]): number[] => {
   // calculate calories for each elf
   const elves: number[] = input.reduce((acc: number[], current: string) => {
     // next elf
@@ -22,13 +20,28 @@ const part1 = (rawInput: string) => {
     return acc;
   }, [0]);
 
-  return _.max(elves);
+  return elves;
 };
 
-const part2 = (rawInput: string) => {
+const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
+  const elves = getElves(input);
 
-  return;
+  // get elf with highest calorie count
+  return _.max(elves) || 0;
+};
+
+const part2 = (rawInput: string): number => {
+  const input = parseInput(rawInput);
+  const elves = getElves(input);
+  const sorted = _.sortBy(elves);
+  const numElves = sorted.length;
+
+  // get top 3 elves with highest calorie count
+
+  return sorted[numElves - 1]
+    + sorted[numElves - 2]
+    + sorted[numElves - 3];
 };
 
 run({
@@ -58,10 +71,25 @@ run({
   },
   part2: {
     tests: [
-      // {
-      //   input: ``,
-      //   expected: "",
-      // },
+      {
+        input: `
+            1000
+            2000
+            3000
+
+            4000
+
+            5000
+            6000
+
+            7000
+            8000
+            9000
+
+            10000
+        `,
+        expected: 45000,
+      },
     ],
     solution: part2,
   },
