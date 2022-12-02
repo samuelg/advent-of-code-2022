@@ -17,15 +17,20 @@ enum Player {
   Scissors = "Z",
 }
 
+enum Strategy {
+  Lose = "X",
+  Draw = "Y",
+  Win = "Z",
+}
+
 enum Move {
   Rock,
   Paper,
   Scissors,
 }
 
-const getMoves = (opponent: Opponent, player: Player): Move[] => {
+const getOpponentMove = (opponent: Opponent): Move => {
   let opponentMove: Move;
-  let playerMove: Move;
 
   switch(opponent) {
     case Opponent.Rock: {
@@ -41,6 +46,13 @@ const getMoves = (opponent: Opponent, player: Player): Move[] => {
       break;
     }
   }
+
+  return opponentMove;
+};
+
+const getPlayerMove = (player: Player): Move => {
+  let playerMove: Move;
+
   switch(player) {
     case Player.Rock: {
       playerMove = Move.Rock;
@@ -55,7 +67,37 @@ const getMoves = (opponent: Opponent, player: Player): Move[] => {
     }
   }
 
-  return [opponentMove, playerMove];
+  return playerMove;
+};
+
+const getPlayerMoveFromStrategy = (playerStrategy: Strategy, opponentMove: Move): Move => {
+  if (playerStrategy === Strategy.Draw) {
+    return opponentMove;
+  } else if (playerStrategy === Strategy.Win) {
+    switch (opponentMove) {
+      case (Move.Rock): {
+        return Move.Paper;
+      }
+      case (Move.Paper): {
+        return Move.Scissors;
+      }
+      default: {
+        return Move.Rock;
+      }
+    }
+  } else {
+    switch (opponentMove) {
+      case (Move.Rock): {
+        return Move.Scissors;
+      }
+      case (Move.Paper): {
+        return Move.Rock;
+      }
+      default: {
+        return Move.Paper;
+      }
+    }
+  }
 };
 
 const getMovePoints = (move: Move): number => {
@@ -73,20 +115,20 @@ const getMovePoints = (move: Move): number => {
 };
 
 const getResultsPoints = (opponent: Move, player: Move): number => {
-    if (opponent === player) {
-        return 3;
-    } else if (player === Move.Rock && opponent === Move.Scissors) {
-        return 6;
-    } else if (player === Move.Paper && opponent === Move.Rock) {
-        return 6;
-    } else if (player === Move.Scissors && opponent === Move.Paper) {
-        return 6;
-    } else {
-        return 0;
-    }
+  if (opponent === player) {
+    return 3;
+  } else if (player === Move.Rock && opponent === Move.Scissors) {
+    return 6;
+  } else if (player === Move.Paper && opponent === Move.Rock) {
+    return 6;
+  } else if (player === Move.Scissors && opponent === Move.Paper) {
+    return 6;
+  } else {
+    return 0;
+  }
 };
 
-const part1 = (rawInput: string) => {
+const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
 
   const score = input.reduce((acc: number, rawMoves: string): number => {
@@ -94,8 +136,8 @@ const part1 = (rawInput: string) => {
 
     const opponentMove = opponentRound as Opponent;
     const playerMove = playerRound as Player;
-    const moves = getMoves(opponentMove, playerMove);
-    const [opponent, player] = moves;
+    const opponent = getOpponentMove(opponentMove);
+    const player = getPlayerMove(playerMove);
 
     const movePoints = getMovePoints(player);
     const resultsPoints = getResultsPoints(opponent, player);
@@ -106,10 +148,24 @@ const part1 = (rawInput: string) => {
   return score;
 };
 
-const part2 = (rawInput: string) => {
+const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
 
-  return;
+  const score = input.reduce((acc: number, rawStrategy: string): number => {
+    const [opponentRound, playerRound] = rawStrategy.split(' ');
+
+    const opponentMove = opponentRound as Opponent;
+    const playerStrategy = playerRound as Strategy;
+    const opponent = getOpponentMove(opponentMove);
+    const player = getPlayerMoveFromStrategy(playerStrategy, opponent);
+
+    const movePoints = getMovePoints(player);
+    const resultsPoints = getResultsPoints(opponent, player);
+
+    return acc + movePoints + resultsPoints;
+  }, 0);
+
+  return score;
 };
 
 run({
@@ -128,10 +184,14 @@ run({
   },
   part2: {
     tests: [
-      // {
-      //   input: ``,
-      //   expected: "",
-      // },
+      {
+        input: `
+          A Y
+          B X
+          C Z
+        `,
+        expected: 12,
+      },
     ],
     solution: part2,
   },
