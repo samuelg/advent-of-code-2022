@@ -2,13 +2,13 @@ import run from "aocrunner";
 import _ from "lodash";
 
 const parseInput = (rawInput: string): string[] => {
-    const lines: string[] = rawInput.split('\n');
+    const lines = rawInput.split('\n');
     return lines;
 };
 
 const getElves = (input: string[]): number[] => {
   // calculate calories for each elf
-  const elves: number[] = input.reduce((acc: number[], current: string) => {
+  const elves = input.reduce((acc: number[], current: string) => {
     // next elf
     if (current === "") {
         acc.push(0);
