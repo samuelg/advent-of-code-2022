@@ -2,8 +2,8 @@ import run from "aocrunner";
 import _ from "lodash";
 
 const parseInput = (rawInput: string): string[] => {
-    const lines = rawInput.split('\n');
-    return lines;
+  const lines = rawInput.split('\n');
+  return lines;
 };
 
 const getElves = (input: string[]): number[] => {
