@@ -53,12 +53,12 @@ run({
     tests: [
       {
         input: `
-            vJrwpWtwJgWrhcsFMMfFFhFp
-            jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-            PmmdzqPrVvPwwTWBwg
-            wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-            ttgJtRGJQctTZtZT
-            CrZsJsPPZsGzwwsLwLmpwMDw
+          vJrwpWtwJgWrhcsFMMfFFhFp
+          jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+          PmmdzqPrVvPwwTWBwg
+          wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+          ttgJtRGJQctTZtZT
+          CrZsJsPPZsGzwwsLwLmpwMDw
         `,
         expected: 157,
       },
@@ -69,12 +69,12 @@ run({
     tests: [
       {
         input: `
-            vJrwpWtwJgWrhcsFMMfFFhFp
-            jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-            PmmdzqPrVvPwwTWBwg
-            wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-            ttgJtRGJQctTZtZT
-            CrZsJsPPZsGzwwsLwLmpwMDw
+          vJrwpWtwJgWrhcsFMMfFFhFp
+          jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+          PmmdzqPrVvPwwTWBwg
+          wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+          ttgJtRGJQctTZtZT
+          CrZsJsPPZsGzwwsLwLmpwMDw
         `,
         expected: 70,
       },
