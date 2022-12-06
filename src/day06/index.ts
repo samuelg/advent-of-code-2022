@@ -7,7 +7,12 @@ const parseInput = (rawInput: string): string[] => {
   return signal.split('');
 };
 
-function markerFound(buffer: string[]): boolean {
+enum Protocol {
+  Marker = 4,
+  Message = 14,
+}
+
+function removeUpToDuplicate(buffer: string[]): void {
   const last = _.last(buffer);
   // remove elements up to any duplicate
   const index = buffer.findIndex((candidate) => candidate === last);
@@ -16,8 +21,18 @@ function markerFound(buffer: string[]): boolean {
   if (index >= 0 && index !== buffer.length - 1) {
     buffer.splice(0, index + 1);
   }
+}
 
-  return buffer.length === 4;
+function markerFound(buffer: string[]): boolean {
+  removeUpToDuplicate(buffer);
+
+  return buffer.length === Protocol.Marker;
+}
+
+function messageFound(buffer: string[]): boolean {
+  removeUpToDuplicate(buffer);
+
+  return buffer.length === Protocol.Message;
 }
 
 const part1 = (rawInput: string): number => {
@@ -39,10 +54,23 @@ const part1 = (rawInput: string): number => {
   return position;
 };
 
-const part2 = (rawInput: string) => {
+const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
+  const buffer: string[] = [];
+  let position = 0;
 
-  return;
+  for (let index = 0; index < input.length; index++) {
+    const char = input[index];
+    buffer.push(char);
+    const found = messageFound(buffer);
+
+    if (found) {
+      position = index + 1;
+      break;
+    }
+  }
+
+  return position;
 };
 
 run({
@@ -83,10 +111,26 @@ run({
   },
   part2: {
     tests: [
-      // {
-      //   input: ``,
-      //   expected: "",
-      // },
+      {
+        input: `mjqjpqmgbljsphdztnvjfqwrcgsmlb`,
+        expected: 19
+      },
+      {
+        input: `bvwbjplbgvbhsrlpgdmjqwftvncz`,
+        expected: 23
+      },
+      {
+        input: `nppdvjthqldpwncqszvftbrmjlhg`,
+        expected: 23
+      },
+      {
+        input: `nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg`,
+        expected: 29
+      },
+      {
+        input: `zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw`,
+        expected: 26
+      },
     ],
     solution: part2,
   },
