@@ -56,11 +56,24 @@ function getInstructions(input: string[]): Instruction[] {
   return instructions;
 }
 
-function applyInstruction(stacks: string[][], instruction: Instruction): string[][] {
+function applyInstruction9000(stacks: string[][], instruction: Instruction): string[][] {
   _.range(instruction.num).forEach(() => {
     const crate = stacks[instruction.from - 1].pop();
     stacks[instruction.to - 1].push(crate || '');
   });
+
+  return stacks;
+}
+
+function applyInstruction9001(stacks: string[][], instruction: Instruction): string[][] {
+  const take: string[] = [];
+
+  _.range(instruction.num).forEach(() => {
+    const crate = stacks[instruction.from - 1].pop();
+    if (crate) take.push(crate);
+  });
+
+  take.reverse().forEach((crate) => stacks[instruction.to - 1].push(crate));
 
   return stacks;
 }
@@ -75,16 +88,22 @@ const part1 = (rawInput: string): string => {
   const instructions = getInstructions(input);
 
   instructions.forEach((instruction: Instruction) => {
-    applyInstruction(stacks, instruction);
+    applyInstruction9000(stacks, instruction);
   });
 
   return getTopStacks(stacks).join('');
 };
 
-const part2 = (rawInput: string) => {
+const part2 = (rawInput: string): string => {
   const input = parseInput(rawInput);
+  const stacks = getStacks(input);
+  const instructions = getInstructions(input);
 
-  return;
+  instructions.forEach((instruction: Instruction) => {
+    applyInstruction9001(stacks, instruction);
+  });
+
+  return getTopStacks(stacks).join('');
 };
 
 run({
@@ -110,10 +129,21 @@ move 1 from 1 to 2
   },
   part2: {
     tests: [
-      // {
-      //   input: ``,
-      //   expected: "",
-      // },
+      {
+        // .editorconfig no longer trims whitespace for this file so we preserce
+        // significant whitespace in the test input
+        input: `    [D]    
+[N] [C]    
+[Z] [M] [P]
+ 1   2   3 
+
+move 1 from 2 to 1
+move 3 from 1 to 3
+move 2 from 2 to 1
+move 1 from 1 to 2
+        `,
+        expected: "MCD",
+      },
     ],
     solution: part2,
   },
