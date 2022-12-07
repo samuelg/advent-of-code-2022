@@ -2,7 +2,7 @@ import run from "aocrunner";
 import _ from "lodash";
 
 const parseInput = (rawInput: string): string[] => {
-  const lines = rawInput.split('\n');
+  const lines = rawInput.split("\n");
   return lines;
 };
 
@@ -14,12 +14,12 @@ interface Instruction {
 
 function getStacks(input: string[]): string[][] {
   const stacks = input.reduce((acc: string[][], line): string[][] => {
-    if (line.startsWith(' 1') || line.trim() === "" || line.startsWith('move')) {
+    if (line.startsWith(" 1") || line.trim() === "" || line.startsWith("move")) {
       return acc;
     }
 
     const crates = [...line.matchAll(/[\[ ](?<crate>[A-Z ])[\] ] ?/g)]
-      .map(g => g && g.groups ? g.groups.crate : '');
+      .map(g => g && g.groups ? g.groups.crate : "");
     acc.push(crates);
 
     return acc;
@@ -30,7 +30,7 @@ function getStacks(input: string[]): string[][] {
   return _.zip(...stacks)
     // typescript complains about the array containing either strings or
     // undefined
-    .map((a) => a.map((b) => !b ? '': b))
+    .map((a) => a.map((b) => !b ? "": b))
     // we want the items on top to be at the end of the array
     .map((a) => a.reverse())
     // once reversed remove empty crates
@@ -39,7 +39,7 @@ function getStacks(input: string[]): string[][] {
 
 function getInstructions(input: string[]): Instruction[] {
   const instructions = input.reduce((acc: Instruction[], line): Instruction[] => {
-    if (line.startsWith('move')) {
+    if (line.startsWith("move")) {
       const move = line.match(/move (?<num>\d+) from (?<from>\d) to (?<to>\d)/);
       if (move && move.groups) {
         acc.push({
@@ -59,7 +59,7 @@ function getInstructions(input: string[]): Instruction[] {
 function applyInstruction9000(stacks: string[][], instruction: Instruction): string[][] {
   _.range(instruction.num).forEach(() => {
     const crate = stacks[instruction.from - 1].pop();
-    stacks[instruction.to - 1].push(crate || '');
+    stacks[instruction.to - 1].push(crate || "");
   });
 
   return stacks;
@@ -79,7 +79,7 @@ function applyInstruction9001(stacks: string[][], instruction: Instruction): str
 }
 
 function getTopStacks(stacks: string[][]): string[] {
-  return stacks.map((stack) => _.last(stack) || '');
+  return stacks.map((stack) => _.last(stack) || "");
 }
 
 const part1 = (rawInput: string): string => {
@@ -91,7 +91,7 @@ const part1 = (rawInput: string): string => {
     applyInstruction9000(stacks, instruction);
   });
 
-  return getTopStacks(stacks).join('');
+  return getTopStacks(stacks).join("");
 };
 
 const part2 = (rawInput: string): string => {
@@ -103,7 +103,7 @@ const part2 = (rawInput: string): string => {
     applyInstruction9001(stacks, instruction);
   });
 
-  return getTopStacks(stacks).join('');
+  return getTopStacks(stacks).join("");
 };
 
 run({

@@ -2,7 +2,7 @@ import run from "aocrunner";
 import _ from "lodash";
 
 const parseInput = (rawInput: string): string[] => {
-  const lines = rawInput.split('\n');
+  const lines = rawInput.split("\n");
   return lines;
 };
 
@@ -19,7 +19,7 @@ const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
 
   const sum = input.reduce((rucksackSum: number, rucksack: string): number => {
-    const rucksackItems = rucksack.split('');
+    const rucksackItems = rucksack.split("");
     const compartments = _.chunk(
         rucksackItems,
         rucksackItems.length / 2
@@ -36,7 +36,7 @@ const part1 = (rawInput: string): number => {
 
 const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
-  const rucksacks = input.map((rucksack: string): string[] => rucksack.split(''));
+  const rucksacks = input.map((rucksack: string): string[] => rucksack.split(""));
   const groups = _.chunk(rucksacks, 3);
 
   const sum = groups.reduce((acc: number, groupRucksacks: string[][]): number => {

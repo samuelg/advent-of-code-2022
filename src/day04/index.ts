@@ -2,7 +2,7 @@ import run from "aocrunner";
 import _ from "lodash";
 
 const parseInput = (rawInput: string): string[] => {
-  const lines = rawInput.split('\n');
+  const lines = rawInput.split("\n");
   return lines;
 };
 
@@ -14,8 +14,8 @@ interface Asssignment {
 }
 
 function getAssignmentPairs(rawPairs: string): Asssignment[] {
-  return rawPairs.split(',').map((range: string): Asssignment => {
-    const sections = range.split('-')
+  return rawPairs.split(",").map((range: string): Asssignment => {
+    const sections = range.split("-")
       .map((section: string): number => parseInt(section, 10));
 
     return {

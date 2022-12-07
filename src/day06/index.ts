@@ -2,9 +2,9 @@ import run from "aocrunner";
 import _ from "lodash";
 
 const parseInput = (rawInput: string): string[] => {
-  const signal = rawInput.split('\n')[0];
+  const signal = rawInput.split("\n")[0];
   // return array of characters
-  return signal.split('');
+  return signal.split("");
 };
 
 enum Protocol {

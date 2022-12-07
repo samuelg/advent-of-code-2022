@@ -1,7 +1,7 @@
 import run from "aocrunner";
 
 const parseInput = (rawInput: string): string[] => {
-  const lines = rawInput.split('\n');
+  const lines = rawInput.split("\n");
   return lines;
 };
 
@@ -132,7 +132,7 @@ const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
 
   const score = input.reduce((acc: number, rawMoves: string): number => {
-    const [opponentRound, playerRound] = rawMoves.split(' ');
+    const [opponentRound, playerRound] = rawMoves.split(" ");
 
     const opponentMove = opponentRound as Opponent;
     const playerMove = playerRound as Player;
@@ -152,7 +152,7 @@ const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
 
   const score = input.reduce((acc: number, rawStrategy: string): number => {
-    const [opponentRound, playerRound] = rawStrategy.split(' ');
+    const [opponentRound, playerRound] = rawStrategy.split(" ");
 
     const opponentMove = opponentRound as Opponent;
     const playerStrategy = playerRound as Strategy;

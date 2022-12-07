@@ -2,7 +2,7 @@ import run from "aocrunner";
 import _ from "lodash";
 
 const parseInput = (rawInput: string): string[] => {
-  const lines = rawInput.split('\n');
+  const lines = rawInput.split("\n");
   return lines;
 };
 
