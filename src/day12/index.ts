@@ -35,90 +35,44 @@ function findNode(grid: string[][], marker: string): Node {
   return node;
 }
 
-function findAllNodes(grid: string[][], marker: string): Node[] {
-  let nodes: Node[] = [];
-
-  for (let row = 0; row < grid.length; row++) {
-    for (let col = 0; col < grid[row].length; col++) {
-      if (grid[row][col] === marker) {
-        nodes.push({ row, col });
-      }
-    }
-  }
-
-  return nodes;
-}
-
 function wasVisited(visited: Node[], node: Node): boolean {
   return visited.some((v) => v.row === node.row && v.col === node.col);
 }
 
-function findAdjacent(grid: string[][], visited: Node[], node: Node): Node[] {
-  const adjacent: Node[] = [];
+function findAdjacent(grid: string[][], visited: Node[], node: Node, comp: (n1: number, n2: number) => boolean): Node[] {
+  const adjacentNodes: Node[] = [];
 
-  // starting node should be an `a` value
-  const nodeValue = grid[node.row][node.col] === "S"
-    ? 97
-    : grid[node.row][node.col].charCodeAt(0);
+  // start node could be an `a` or `z` value depending on starting node
+  let nodeValue = grid[node.row][node.col].charCodeAt(0);
+  if (grid[node.row][node.col] === "S") nodeValue = "a".charCodeAt(0);
+  if (grid[node.row][node.col] === "E") nodeValue = "z".charCodeAt(0);
 
-  const leftNode = {
-    row: node.row,
-    col: Math.max(node.col - 1, 0),
-    parent: node
-  };
-  // end node should have a `z` value
-  const leftValue = grid[leftNode.row][leftNode.col] === "E"
-    ? 122
-    : grid[leftNode.row][leftNode.col].charCodeAt(0);
+  [
+    [node.row - 1, node.col],
+    [node.row + 1, node.col],
+    [node.row, node.col - 1],
+    [node.row, node.col + 1]
+  ].forEach((adjacent: number[]) => {
+    const [row, col] = adjacent;
 
-  const rightNode = {
-    row: node.row,
-    col: Math.min(node.col + 1, grid[node.row].length - 1),
-    parent: node
-  };
-  const rightValue = grid[rightNode.row][rightNode.col] === "E"
-    ? 122
-    : grid[rightNode.row][rightNode.col].charCodeAt(0);
+    // stay within the grid
+    if (row < 0 || col < 0 || row >= grid.length || col >= grid[node.row].length) return;
 
-  const upNode = {
-    row: Math.max(node.row - 1, 0),
-    col: node.col,
-    parent: node
-  };
-  const upValue = grid[upNode.row][upNode.col] === "E"
-    ? 122
-    : grid[upNode.row][upNode.col].charCodeAt(0);
+    const adjacentNode: Node = { row, col, parent: node };
+    // end node could be an `a` or `z` value depending on starting node
+    let adjacentValue = grid[row][col].charCodeAt(0);
+    if (grid[row][col] === "S") adjacentValue = "a".charCodeAt(0);
+    if (grid[row][col] === "E") adjacentValue = "z".charCodeAt(0);
 
-  const downNode = {
-    row: Math.min(node.row + 1, grid.length - 1),
-    col: node.col,
-    parent: node
-  };
-  const downValue = grid[downNode.row][downNode.col] === "E"
-    ? 122
-    : grid[downNode.row][downNode.col].charCodeAt(0);
+    if (comp(adjacentValue, nodeValue) && !wasVisited(visited, adjacentNode)) {
+      adjacentNodes.push(adjacentNode);
+    }
+  });
 
-  // `E` will be less than even `a` so no need to check for it
-  if (leftValue <= nodeValue + 1 && !wasVisited(visited, leftNode)) {
-    adjacent.push(leftNode);
-  }
-
-  if (rightValue <= nodeValue + 1 && !wasVisited(visited, rightNode)) {
-    adjacent.push(rightNode);
-  }
-
-  if (upValue <= nodeValue + 1 && !wasVisited(visited, upNode)) {
-    adjacent.push(upNode);
-  }
-
-  if (downValue <= nodeValue + 1 && !wasVisited(visited, downNode)) {
-    adjacent.push(downNode);
-  }
-
-  return adjacent;
+  return adjacentNodes;
 }
 
-function bfs(grid: string[][], start: Node): Node[] {
+function bfs(grid: string[][], start: Node, comp: (n1: number, n2: number) => boolean, match: string): Node[] {
   const visited: Node[] = [start];
   const queue = [start];
   let found: Node | undefined;
@@ -126,12 +80,12 @@ function bfs(grid: string[][], start: Node): Node[] {
   while(queue.length > 0) {
     const node = queue.splice(0, 1)[0];
 
-    if (grid[node.row][node.col] === "E") {
+    if (grid[node.row][node.col] === match) {
       found = node;
       break;
     }
 
-    const adjacent = findAdjacent(grid, visited, node);
+    const adjacent = findAdjacent(grid, visited, node, comp);
 
     adjacent.forEach((adj) => {
       queue.push(adj);
@@ -154,26 +108,17 @@ function bfs(grid: string[][], start: Node): Node[] {
 const part1 = (rawInput: string): number => {
   const grid = parseInput(rawInput);
   const start = findNode(grid, "S");
-  const path = bfs(grid, start);
+  const path = bfs(grid, start, (n1, n2) => n1 <= n2 + 1, "E");
 
   return path.length;
 };
 
 const part2 = (rawInput: string): number => {
   const grid = parseInput(rawInput);
-  const start = findNode(grid, "S");
-  const as = findAllNodes(grid, "a");
-  // consider the start as well
-  as.push(start);
+  const start = findNode(grid, "E");
+  const path = bfs(grid, start, (n1, n2) => n2 <= n1 + 1, "a");
 
-  return as.reduce((acc: number, node: Node): number => {
-    const path = bfs(grid, node);
-
-    // 0 means the node cannot reach the goal
-    if (path.length !== 0 && path.length < acc) return path.length;
-
-    return acc;
-  }, Infinity);
+  return path.length;
 };
 
 run({
