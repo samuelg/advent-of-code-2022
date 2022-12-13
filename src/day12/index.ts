@@ -35,6 +35,20 @@ function findNode(grid: string[][], marker: string): Node {
   return node;
 }
 
+function findAllNodes(grid: string[][], marker: string): Node[] {
+  let nodes: Node[] = [];
+
+  for (let row = 0; row < grid.length; row++) {
+    for (let col = 0; col < grid[row].length; col++) {
+      if (grid[row][col] === marker) {
+        nodes.push({ row, col });
+      }
+    }
+  }
+
+  return nodes;
+}
+
 function wasVisited(visited: Node[], node: Node): boolean {
   return visited.some((v) => v.row === node.row && v.col === node.col);
 }
@@ -104,8 +118,7 @@ function findAdjacent(grid: string[][], visited: Node[], node: Node): Node[] {
   return adjacent;
 }
 
-function bfs(grid: string[][]): Node[] {
-  const start = findNode(grid, "S");
+function bfs(grid: string[][], start: Node): Node[] {
   const visited: Node[] = [start];
   const queue = [start];
   let found: Node | undefined;
@@ -140,15 +153,27 @@ function bfs(grid: string[][]): Node[] {
 
 const part1 = (rawInput: string): number => {
   const grid = parseInput(rawInput);
-  const path = bfs(grid);
+  const start = findNode(grid, "S");
+  const path = bfs(grid, start);
 
   return path.length;
 };
 
-const part2 = (rawInput: string) => {
-  const input = parseInput(rawInput);
+const part2 = (rawInput: string): number => {
+  const grid = parseInput(rawInput);
+  const start = findNode(grid, "S");
+  const as = findAllNodes(grid, "a");
+  // consider the start as well
+  as.push(start);
 
-  return;
+  return as.reduce((acc: number, node: Node): number => {
+    const path = bfs(grid, node);
+
+    // 0 means the node cannot reach the goal
+    if (path.length !== 0 && path.length < acc) return path.length;
+
+    return acc;
+  }, Infinity);
 };
 
 run({
@@ -169,10 +194,16 @@ run({
   },
   part2: {
     tests: [
-      // {
-      //   input: ``,
-      //   expected: "",
-      // },
+      {
+        input: `
+          Sabqponm
+          abcryxxl
+          accszExk
+          acctuvwj
+          abdefghi
+        `,
+        expected: 29,
+      },
     ],
     solution: part2,
   },
