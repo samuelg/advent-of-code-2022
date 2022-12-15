@@ -62,8 +62,7 @@ function getGrid(rocks: Coordinate[][]): string[][] {
   return grid;
 }
 
-function move(grid: string[][], lastRow: number, sand: Coordinate): boolean {
-  if (sand.row === lastRow) return true;
+function move(grid: string[][], sand: Coordinate): boolean {
   if (!grid[sand.row + 1]) grid[sand.row + 1] = [];
 
   // try down
@@ -96,25 +95,27 @@ function move(grid: string[][], lastRow: number, sand: Coordinate): boolean {
   return true;
 }
 
-function simulate(rocks: Coordinate[][]): number {
-  const lastRow = findLastRow(rocks);
+function simulate(rocks: Coordinate[][], end: number): number {
   const grid = getGrid(rocks);
-  let abyss = false;
   let count = 0;
 
-  while (!abyss) {
+  while (true) {
     let sand: Coordinate = { row: 0, col: 500 };
     let resting = false;
+    let done = false;
 
     while (!resting) {
-      resting = move(grid, lastRow, sand);
+      resting = move(grid, sand);
+      // did we hit the end?
+      if (sand.row === end) {
+        done = true;
+        break;
+      }
     }
-    // did we hit the abyss?
-    if (sand.row >= lastRow) {
-      abyss = true;
-    } else {
-      count++;
-    }
+
+    if (done) break;
+
+    count++;
   }
 
   return count;
@@ -122,15 +123,27 @@ function simulate(rocks: Coordinate[][]): number {
 
 const part1 = (rawInput: string): number => {
   const coordinates = parseInput(rawInput);
-  const count = simulate(coordinates);
+  const lastRow = findLastRow(coordinates);
+  const count = simulate(coordinates, lastRow);
 
   return count;
 };
 
-const part2 = (rawInput: string) => {
-  const input = parseInput(rawInput);
+const part2 = (rawInput: string): number => {
+  const coordinates = parseInput(rawInput);
+  // add floor line
+  const lastRow = findLastRow(coordinates);
+  coordinates.push([{
+    row: lastRow + 2,
+    col: 0
+  }, {
+    row: lastRow + 2,
+    col: 1000
+  }]);
+  const count = simulate(coordinates, 0);
 
-  return;
+  // need to account for last grain of sand that came to rest at the top
+  return count + 1;
 };
 
 run({
@@ -148,10 +161,13 @@ run({
   },
   part2: {
     tests: [
-      // {
-      //   input: ``,
-      //   expected: "",
-      // },
+      {
+        input: `
+          498,4 -> 498,6 -> 496,6
+          503,4 -> 502,4 -> 502,9 -> 494,9
+        `,
+        expected: 93,
+      },
     ],
     solution: part2,
   },
